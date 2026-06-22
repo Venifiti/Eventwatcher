@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eventwatcher - Salzburg Events</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #171717;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --soft: #eef4ff;
+      --good: #16a34a;
+      --warn: #f59e0b;
+      --danger: #dc2626;
+      --radius: 20px;
+      --shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
+      --hero-gradient: linear-gradient(135deg, #1e3a8a, #2563eb);
+    }
+
+    body.theme-soft {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #171717;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --soft: #eef4ff;
+      --hero-gradient: linear-gradient(135deg, #1e3a8a, #2563eb);
+    }
+
+    body.theme-warm {
+      --bg: #fff7ed;
+      --card: #fffaf3;
+      --text: #2b1708;
+      --muted: #7c5c44;
+      --line: #fed7aa;
+      --primary: #ea580c;
+      --primary-dark: #c2410c;
+      --soft: #ffedd5;
+      --hero-gradient: linear-gradient(135deg, #9a3412, #ea580c);
+    }
+
+    body.theme-green {
+      --bg: #f0fdf4;
+      --card: #ffffff;
+      --text: #102018;
+      --muted: #5f7567;
+      --line: #bbf7d0;
+      --primary: #16a34a;
+      --primary-dark: #15803d;
+      --soft: #dcfce7;
+      --hero-gradient: linear-gradient(135deg, #14532d, #16a34a);
+    }
+
+    body.theme-dark {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #f9fafb;
+      --muted: #cbd5e1;
+      --line: #334155;
+      --primary: #60a5fa;
+      --primary-dark: #3b82f6;
+      --soft: #172554;
+      --hero-gradient: linear-gradient(135deg, #020617, #1d4ed8);
+      --shadow: 0 16px 45px rgba(0, 0, 0, 0.32);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--hero-gradient);
+      color: white;
+      padding: 28px 18px 34px;
+    }
+
+    .container { max-width: 1180px; margin: 0 auto; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 34px;
+    }
+
+    .logo { font-weight: 800; font-size: 22px; letter-spacing: -0.5px; }
+
+    .nav { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .nav button {
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.12);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .nav button:hover { background: rgba(255,255,255,0.22); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero h1 {
+      font-size: clamp(34px, 6vw, 64px);
+      line-height: 0.98;
+      margin: 0 0 18px;
+      letter-spacing: -2px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.55;
+      margin: 0 0 24px;
+      color: rgba(255,255,255,0.88);
+      max-width: 720px;
+    }
+
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn {
+      border: 0;
+      background: var(--primary);
+      color: white;
+      padding: 13px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 15px;
+      transition: 0.15s ease;
+    }
+
+    .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn.secondary { background: white; color: var(--primary); }
+    .btn.ghost { background: transparent; color: var(--primary); border: 1px solid var(--line); }
+    .btn.small { padding: 9px 12px; border-radius: 10px; font-size: 13px; }
+
+    .hero-card {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: var(--radius);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-card h3 { margin-top: 0; font-size: 20px; }
+    .mini-list { display: grid; gap: 12px; }
+    .mini-item { background: rgba(255,255,255,0.12); padding: 12px; border-radius: 14px; }
+
+    main { padding: 26px 18px 70px; }
+
+    .panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 22px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-title h2 { margin: 0; font-size: 28px; letter-spacing: -0.7px; }
+    .section-title p { margin: 4px 0 0; color: var(--muted); }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 170px 170px;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font: inherit;
+      background: var(--card);
+      color: var(--text);
+    }
+
+    textarea { min-height: 94px; resize: vertical; }
+
+    .chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+
+    .chip {
+      border: 1px solid var(--line);
+      background: var(--card);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .events { display: grid; gap: 14px; }
+
+    .event-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: var(--card);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+    }
+
+    .event-card.featured {
+      border-color: color-mix(in srgb, var(--primary) 35%, var(--line));
+      background: linear-gradient(135deg, var(--card), var(--soft));
+    }
+
+    .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+
+    .badge {
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .badge.premium { background: #fef3c7; color: #92400e; }
+    .badge.free { background: #dcfce7; color: #166534; }
+
+    .event-card h3 { margin: 0 0 8px; font-size: 22px; }
+    .event-meta { color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+    .event-desc { margin: 0; line-height: 1.55; }
+
+    .event-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 155px;
+      justify-content: center;
+    }
+
+    .favorite-provider {
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .favorite-provider.active {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #fbbf24;
+    }
+
+    .side { display: grid; gap: 18px; }
+
+    .login-box, .business-box, .stats-box, .favorite-box, .notify-box, .design-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: var(--card);
+    }
+
+    .login-box h3, .business-box h3, .stats-box h3, .favorite-box h3, .notify-box h3, .design-box h3 {
+      margin: 0 0 12px;
+    }
+
+    .form-grid { display: grid; gap: 10px; }
+
+    .success {
+      background: #ecfdf5;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      display: none;
+      margin-top: 10px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .locked { opacity: 0.55; pointer-events: none; filter: grayscale(0.2); }
+
+    .lock-hint {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+
+    body.theme-dark .lock-hint { background: #1f2937; border-color: #475569; color: #fed7aa; }
+
+    .fav-list { display: grid; gap: 8px; margin-top: 10px; }
+
+    .fav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: var(--bg);
+      font-size: 14px;
+    }
+
+    .fav-item button {
+      border: 0;
+      background: transparent;
+      color: var(--danger);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 9px 0;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .setting-row input { width: auto; }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .theme-option {
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      padding: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .theme-option.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+    }
+
+    .demo-notice {
+      background: var(--soft);
+      border: 1px solid color-mix(in srgb, var(--primary) 35%, var(--line));
+      border-radius: 14px;
+      padding: 12px;
+      color: var(--text);
+      line-height: 1.45;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .business-form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .business-form .full { grid-column: 1 / -1; }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .admin-table th, .admin-table td {
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 12px;
+      vertical-align: top;
+    }
+
+    .admin-table th { background: var(--bg); font-size: 13px; color: var(--text); }
+
+    .empty {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+
+    footer { color: var(--muted); text-align: center; padding: 20px; }
+
+    @media (max-width: 930px) {
+      .hero, .content-grid { grid-template-columns: 1fr; }
+      .filters, .business-form { grid-template-columns: 1fr; }
+      .event-card { grid-template-columns: 1fr; }
+      .event-actions { flex-direction: row; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body class="theme-soft">
+  <header>
+    <div class="container">
+      <div class="topbar">
+        <div class="logo">Eventwatcher</div>
+        <div class="nav">
+          <button onclick="scrollToSection('events')">Events finden</button>
+          <button onclick="scrollToSection('business')">Event eintragen</button>
+        </div>
+      </div>
+
+      <section class="hero">
+        <div>
+          <h1>Finde schnell, was heute in Salzburg los ist.</h1>
+          <p>
+            Eine einfache Event-App für Familien, Senioren, Essen, Kultur, Bars, Partys und Freizeit.
+            Nutzer bekommen passende Ideen in ihrer Nähe, können Lokale favorisieren und sich über neue Events informieren lassen.
+          </p>
+          <div class="hero-actions">
+            <button class="btn secondary" onclick="scrollToSection('events')">Jetzt Events ansehen</button>
+            <button class="btn" onclick="scrollToSection('business')">Als Unternehmen eintragen</button>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <h3>Heute vorgeschlagen</h3>
+          <div class="mini-list">
+            <div class="mini-item">Familienbrunch im Park Cafe</div>
+            <div class="mini-item">Pasta-Abend in der Altstadt</div>
+            <div class="mini-item">Afterwork Party am Rudolfskai</div>
+            <div class="mini-item">Seniorennachmittag mit Musik</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="events" class="panel">
+      <div class="section-title">
+        <div>
+          <h2>Events in Salzburg</h2>
+          <p>Filtere nach Zielgruppe, Kategorie, Datum oder Suche.</p>
+        </div>
+      </div>
+
+      <div class="filters">
+        <input id="searchInput" type="text" placeholder="Suche nach Event, Ort oder Anbieter..." oninput="renderEvents()" />
+        <select id="dateFilter" onchange="renderEvents()">
+          <option value="all">Alle Tage</option>
+          <option value="Heute">Heute</option>
+          <option value="Morgen">Morgen</option>
+          <option value="Wochenende">Wochenende</option>
+        </select>
+        <select id="sortFilter" onchange="renderEvents()">
+          <option value="recommended">Empfohlen</option>
+          <option value="cheap">Kostenlos zuerst</option>
+          <option value="popular">Beliebt zuerst</option>
+        </select>
+      </div>
+
+      <div class="chips" id="categoryChips"></div>
+
+      <div class="content-grid">
+        <div>
+          <div class="events" id="eventList"></div>
+        </div>
+
+        <aside class="side">
+          <div class="login-box">
+            <h3>Einfach registrieren</h3>
+            <div class="form-grid">
+              <input id="userName" type="text" placeholder="Dein Name" />
+              <input id="userEmail" type="email" placeholder="E-Mail" />
+              <input id="userLocation" type="text" value="Salzburg" placeholder="Standort" />
+              <select id="userInterest">
+                <option>Familie</option>
+                <option>Essen</option>
+                <option>Party</option>
+                <option>Senioren</option>
+                <option>Kultur</option>
+              </select>
+              <button class="btn" onclick="registerUser()">Registrieren</button>
+              <div class="success" id="registerSuccess">Registriert! Favoriten, Benachrichtigungen und Design sind jetzt freigeschaltet.</div>
+            </div>
+          </div>
+
+          <div class="stats-box">
+            <h3>Live-Idee für später</h3>
+            <p>Nach Registrierung kann die App passende Events nach Standort, Interessen, Favoriten und Uhrzeit vorschlagen.</p>
+            <p><strong id="reservationCount">0</strong> Demo-Zusagen/Reservierungen in dieser Sitzung.</p>
+          </div>
+
+          <div class="favorite-box">
+            <h3>Meine Favoriten</h3>
+            <div id="favoriteLock" class="lock-hint">Bitte zuerst registrieren. Danach kannst du Lokale und Veranstalter speichern.</div>
+            <div id="favoriteArea" class="locked">
+              <p style="color: var(--muted); margin-top: 0;">Speichere Bars, Restaurants, Vereine oder Veranstalter und erhalte später neue Events von ihnen.</p>
+              <div class="fav-list" id="favoriteList"></div>
+            </div>
+          </div>
+
+          <div class="notify-box">
+            <h3>Benachrichtigungen</h3>
+            <div id="notifyLock" class="lock-hint">Bitte zuerst registrieren. Danach kannst du Push- und E-Mail-Benachrichtigungen einstellen.</div>
+            <div id="notifyArea" class="locked">
+              <label class="setting-row">
+                <input id="pushEnabled" type="checkbox" onchange="saveNotificationSettings()" />
+                Push-Benachrichtigung bei neuen Events meiner Favoriten
+              </label>
+              <label class="setting-row">
+                <input id="emailEnabled" type="checkbox" onchange="saveNotificationSettings()" />
+                E-Mail-Zusammenfassung neuer Events
+              </label>
+              <label class="setting-row">
+                <input id="sameDayEnabled" type="checkbox" onchange="saveNotificationSettings()" />
+                Erinnerung am selben Tag
+              </label>
+              <button class="btn small" onclick="requestDemoPush()">Push testen</button>
+              <div class="demo-notice" id="pushDemoBox">Demo: In der echten App würde hier eine Push-Benachrichtigung vom Handy/Browser erscheinen.</div>
+            </div>
+          </div>
+
+          <div class="design-box">
+            <h3>Design personalisieren</h3>
+            <div id="designLock" class="lock-hint">Bitte zuerst registrieren. Danach kannst du Farben und Darstellung ändern.</div>
+            <div id="designArea" class="locked">
+              <p style="color: var(--muted); margin-top: 0;">Deine Auswahl wird lokal gespeichert und beim nächsten Öffnen wieder geladen.</p>
+              <div class="theme-grid">
+                <button class="theme-option" data-theme="soft" onclick="setTheme('soft')">Blau</button>
+                <button class="theme-option" data-theme="warm" onclick="setTheme('warm')">Warm</button>
+                <button class="theme-option" data-theme="green" onclick="setTheme('green')">Gruen</button>
+                <button class="theme-option" data-theme="dark" onclick="setTheme('dark')">Dunkel</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="business" class="panel">
+      <div class="section-title">
+        <div>
+          <h2>Event als Unternehmen eintragen</h2>
+          <p>In der ersten Phase kostenlos. Unternehmen koennen Events in den Kalender eintragen.</p>
+        </div>
+      </div>
+
+      <div class="business-box">
+        <div class="business-form">
+          <input id="bizName" type="text" placeholder="Unternehmen / Veranstalter" />
+          <input id="eventTitle" type="text" placeholder="Event-Titel" />
+          <select id="eventCategory">
+            <option>Familie</option>
+            <option>Senioren</option>
+            <option>Essen</option>
+            <option>Party</option>
+            <option>Kultur</option>
+            <option>Sport</option>
+          </select>
+          <select id="eventDay">
+            <option>Heute</option>
+            <option>Morgen</option>
+            <option>Wochenende</option>
+          </select>
+          <input id="eventLocation" type="text" placeholder="Ort, z.B. Salzburg Altstadt" />
+          <input id="eventPrice" type="text" placeholder="Preis, z.B. kostenlos / 12 Euro" />
+          <textarea class="full" id="eventDescription" placeholder="Kurze Beschreibung des Events"></textarea>
+          <button class="btn full" onclick="addBusinessEvent()">Event kostenlos eintragen</button>
+        </div>
+        <div class="success" id="businessSuccess">Event wurde eingetragen und erscheint sofort in der Liste.</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title">
+        <div>
+          <h2>Admin-Ansicht für Anbieter</h2>
+          <p>So könnte ein einfacher Kalender / Event-Manager aussehen.</p>
+        </div>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Kategorie</th>
+            <th>Tag</th>
+            <th>Ort</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="adminRows"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    Prototyp fuer eine einfache Event-App. Noch ohne echtes Backend, Login, Zahlung oder Datenschutzsystem.
+  </footer>
+
+  <script>
+    const categories = ["Alle", "Familie", "Senioren", "Essen", "Party", "Kultur", "Sport"];
+    let activeCategory = "Alle";
+    let reservationCounter = 0;
+    let isRegistered = localStorage.getItem("eventwatcher_registered") === "true";
+    let favoriteProviders = JSON.parse(localStorage.getItem("eventwatcher_favorites") || "[]");
+    let notificationSettings = JSON.parse(localStorage.getItem("eventwatcher_notifications") || '{"push": false, "email": false, "sameDay": false}');
+    let currentTheme = localStorage.getItem("eventwatcher_theme") || "soft";
+
+    let events = [
+      {
+        title: "Familienbrunch im Park Cafe",
+        category: "Familie",
+        day: "Heute",
+        time: "10:00",
+        location: "Salzburg Nonntal",
+        price: "18 Euro",
+        provider: "Park Cafe Salzburg",
+        description: "Gemuetlicher Brunch mit Spielecke, Kinderkarte und Platz fuer Kinderwaegen.",
+        popular: 91,
+        featured: true
+      },
+      {
+        title: "Pasta-Abend in der Altstadt",
+        category: "Essen",
+        day: "Heute",
+        time: "18:30",
+        location: "Salzburg Altstadt",
+        price: "22 Euro",
+        provider: "Trattoria Centro",
+        description: "Italienischer Abend mit drei Pasta-Varianten und optionaler Weinbegleitung.",
+        popular: 86,
+        featured: false
+      },
+      {
+        title: "Afterwork Party am Rudolfskai",
+        category: "Party",
+        day: "Heute",
+        time: "20:00",
+        location: "Rudolfskai",
+        price: "kostenlos",
+        provider: "Bar Am Kai",
+        description: "Musik, Drinks und lockerer Treffpunkt fuer Freunde nach der Arbeit.",
+        popular: 95,
+        featured: true
+      },
+      {
+        title: "Seniorennachmittag mit Live-Musik",
+        category: "Senioren",
+        day: "Morgen",
+        time: "15:00",
+        location: "Salzburg Lehen",
+        price: "kostenlos",
+        provider: "Kulturhaus Lehen",
+        description: "Ruhiger Nachmittag mit Kaffee, Kuchen und bekannten Klassikern.",
+        popular: 72,
+        featured: false
+      },
+      {
+        title: "Kinder-Theater: Der kleine Drache",
+        category: "Kultur",
+        day: "Wochenende",
+        time: "14:00",
+        location: "Salzburg Maxglan",
+        price: "9 Euro",
+        provider: "Theater Maxglan",
+        description: "Kurzes Theaterstueck fuer Kinder ab 4 Jahren. Ideal fuer Familien am Wochenende.",
+        popular: 82,
+        featured: false
+      },
+      {
+        title: "Yoga im Mirabellgarten",
+        category: "Sport",
+        day: "Morgen",
+        time: "08:30",
+        location: "Mirabellgarten",
+        price: "freiwillige Spende",
+        provider: "Move Salzburg",
+        description: "Sanfte Yoga-Einheit im Freien. Matte mitbringen.",
+        popular: 78,
+        featured: false
+      }
+    ];
+
+    function escapeForOnClick(value) {
+      return value.replaceAll("'", "\\'").replaceAll('"', '&quot;');
+    }
+
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+    }
+
+    function applyTheme() {
+      document.body.classList.remove("theme-soft", "theme-warm", "theme-green", "theme-dark");
+      document.body.classList.add("theme-" + currentTheme);
+    }
+
+    function setTheme(themeName) {
+      if (!isRegistered) {
+        alert("Bitte zuerst registrieren. Danach kannst du dein Design personalisieren.");
+        return;
+      }
+
+      currentTheme = themeName;
+      localStorage.setItem("eventwatcher_theme", themeName);
+      applyTheme();
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      document.querySelectorAll(".theme-option").forEach(button => {
+        button.classList.toggle("active", button.dataset.theme === currentTheme);
+      });
+    }
+
+    function applyRegisteredState() {
+      const areas = ["favoriteArea", "notifyArea", "designArea"];
+      const locks = ["favoriteLock", "notifyLock", "designLock"];
+
+      areas.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle("locked", !isRegistered);
+      });
+
+      locks.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = isRegistered ? "none" : "block";
+      });
+
+      const registerSuccess = document.getElementById("registerSuccess");
+      if (registerSuccess && isRegistered) {
+        registerSuccess.style.display = "block";
+        registerSuccess.textContent = "Du bist registriert. Favoriten, Benachrichtigungen und Design sind freigeschaltet.";
+      }
+
+      renderFavorites();
+      loadNotificationSettings();
+      updateThemeButtons();
+    }
+
+    function renderCategoryChips() {
+      const wrapper = document.getElementById("categoryChips");
+      wrapper.innerHTML = "";
+
+      categories.forEach(category => {
+        const chip = document.createElement("button");
+        chip.className = "chip" + (category === activeCategory ? " active" : "");
+        chip.textContent = category;
+        chip.onclick = () => {
+          activeCategory = category;
+          renderCategoryChips();
+          renderEvents();
+        };
+        wrapper.appendChild(chip);
+      });
+    }
+
+    function renderEvents() {
+      const list = document.getElementById("eventList");
+      const search = document.getElementById("searchInput").value.toLowerCase().trim();
+      const date = document.getElementById("dateFilter").value;
+      const sort = document.getElementById("sortFilter").value;
+
+      let filtered = events.filter(event => {
+        const matchesCategory = activeCategory === "Alle" || event.category === activeCategory;
+        const matchesDate = date === "all" || event.day === date;
+        const searchText = `${event.title} ${event.provider} ${event.location} ${event.description}`.toLowerCase();
+        const matchesSearch = !search || searchText.includes(search);
+        return matchesCategory && matchesDate && matchesSearch;
+      });
+
+      if (sort === "cheap") {
+        filtered.sort((a, b) => {
+          const aFree = a.price.toLowerCase().includes("kostenlos") || a.price.toLowerCase().includes("spende");
+          const bFree = b.price.toLowerCase().includes("kostenlos") || b.price.toLowerCase().includes("spende");
+          return Number(bFree) - Number(aFree);
+        });
+      }
+
+      if (sort === "popular") {
+        filtered.sort((a, b) => b.popular - a.popular);
+      }
+
+      if (sort === "recommended") {
+        filtered.sort((a, b) => Number(b.featured) - Number(a.featured) || b.popular - a.popular);
+      }
+
+      list.innerHTML = "";
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty">Keine passenden Events gefunden. Aendere den Filter oder trage ein neues Event ein.</div>';
+        return;
+      }
+
+      filtered.forEach(event => {
+        const isFav = favoriteProviders.includes(event.provider);
+        const card = document.createElement("article");
+        card.className = "event-card" + (event.featured ? " featured" : "");
+        card.innerHTML = `
+          <div>
+            <div class="badge-row">
+              <span class="badge">${event.category}</span>
+              <span class="badge">${event.day}, ${event.time}</span>
+              <span class="badge">${event.price}</span>
+              ${event.featured ? '<span class="badge premium">Top gereiht</span>' : '<span class="badge free">Standard</span>'}
+            </div>
+            <h3>${event.title}</h3>
+            <div class="event-meta">
+              Standort: ${event.location}<br />
+              Anbieter: ${event.provider} - Beliebtheit ${event.popular}%
+            </div>
+            <p class="event-desc">${event.description}</p>
+          </div>
+          <div class="event-actions">
+            <button class="btn small" onclick="reserveEvent('${escapeForOnClick(event.title)}')">Reservieren</button>
+            <button class="btn small ghost" onclick="joinEvent('${escapeForOnClick(event.title)}')">Zusagen</button>
+            <button class="favorite-provider ${isFav ? "active" : ""}" onclick="toggleFavoriteProvider('${escapeForOnClick(event.provider)}')">
+              ${isFav ? "Favorit entfernen" : "Lokal merken"}
+            </button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function reserveEvent(title) {
+      reservationCounter++;
+      document.getElementById("reservationCount").textContent = reservationCounter;
+      alert("Reservierung vorgemerkt fuer: " + title);
+    }
+
+    function joinEvent(title) {
+      reservationCounter++;
+      document.getElementById("reservationCount").textContent = reservationCounter;
+      alert("Zusage gespeichert fuer: " + title);
+    }
+
+    function registerUser() {
+      const name = document.getElementById("userName").value.trim();
+      const email = document.getElementById("userEmail").value.trim();
+      const location = document.getElementById("userLocation").value.trim();
+
+      if (!name || !email || !location) {
+        alert("Bitte Name, E-Mail und Standort ausfuellen.");
+        return;
+      }
+
+      isRegistered = true;
+      localStorage.setItem("eventwatcher_registered", "true");
+      localStorage.setItem("eventwatcher_user", JSON.stringify({
+        name,
+        email,
+        location,
+        interest: document.getElementById("userInterest").value
+      }));
+
+      applyRegisteredState();
+    }
+
+    function toggleFavoriteProvider(provider) {
+      if (!isRegistered) {
+        alert("Bitte zuerst registrieren. Danach kannst du Lokale und Veranstalter zu deinen Favoriten hinzufuegen.");
+        return;
+      }
+
+      if (favoriteProviders.includes(provider)) {
+        favoriteProviders = favoriteProviders.filter(item => item !== provider);
+      } else {
+        favoriteProviders.push(provider);
+      }
+
+      localStorage.setItem("eventwatcher_favorites", JSON.stringify(favoriteProviders));
+      renderFavorites();
+      renderEvents();
+    }
+
+    function removeFavoriteProvider(provider) {
+      favoriteProviders = favoriteProviders.filter(item => item !== provider);
+      localStorage.setItem("eventwatcher_favorites", JSON.stringify(favoriteProviders));
+      renderFavorites();
+      renderEvents();
+    }
+
+    function renderFavorites() {
+      const list = document.getElementById("favoriteList");
+      if (!list) return;
+
+      if (!isRegistered) {
+        list.innerHTML = "";
+        return;
+      }
+
+      if (favoriteProviders.length === 0) {
+        list.innerHTML = '<div class="empty" style="padding: 16px;">Noch keine Favoriten gespeichert.</div>';
+        return;
+      }
+
+      list.innerHTML = "";
+      favoriteProviders.forEach(provider => {
+        const item = document.createElement("div");
+        item.className = "fav-item";
+        item.innerHTML = `
+          <span>${provider}</span>
+          <button onclick="removeFavoriteProvider('${escapeForOnClick(provider)}')">Entfernen</button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function loadNotificationSettings() {
+      const push = document.getElementById("pushEnabled");
+      const email = document.getElementById("emailEnabled");
+      const sameDay = document.getElementById("sameDayEnabled");
+
+      if (push) push.checked = Boolean(notificationSettings.push);
+      if (email) email.checked = Boolean(notificationSettings.email);
+      if (sameDay) sameDay.checked = Boolean(notificationSettings.sameDay);
+    }
+
+    function saveNotificationSettings() {
+      if (!isRegistered) {
+        alert("Bitte zuerst registrieren.");
+        return;
+      }
+
+      notificationSettings = {
+        push: document.getElementById("pushEnabled").checked,
+        email: document.getElementById("emailEnabled").checked,
+        sameDay: document.getElementById("sameDayEnabled").checked
+      };
+
+      localStorage.setItem("eventwatcher_notifications", JSON.stringify(notificationSettings));
+    }
+
+    function requestDemoPush() {
+      if (!isRegistered) {
+        alert("Bitte zuerst registrieren.");
+        return;
+      }
+
+      saveNotificationSettings();
+      const box = document.getElementById("pushDemoBox");
+      box.textContent = "Demo: In der echten App wuerde hier eine Push-Benachrichtigung vom Handy/Browser erscheinen.";
+      box.style.display = "block";
+
+      if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification("Eventwatcher", {
+          body: "Demo: Neues Event bei einem deiner Favoriten verfuegbar."
+        });
+      }
+    }
+
+    function addBusinessEvent() {
+      const provider = document.getElementById("bizName").value.trim();
+      const title = document.getElementById("eventTitle").value.trim();
+      const category = document.getElementById("eventCategory").value;
+      const day = document.getElementById("eventDay").value;
+      const location = document.getElementById("eventLocation").value.trim();
+      const price = document.getElementById("eventPrice").value.trim();
+      const description = document.getElementById("eventDescription").value.trim();
+
+      if (!provider || !title || !location || !price || !description) {
+        alert("Bitte alle Felder ausfuellen.");
+        return;
+      }
+
+      events.unshift({
+        title,
+        category,
+        day,
+        time: "19:00",
+        location,
+        price,
+        provider,
+        description,
+        popular: 50,
+        featured: false
+      });
+
+      if (isRegistered && favoriteProviders.includes(provider) && notificationSettings.push) {
+        const box = document.getElementById("pushDemoBox");
+        if (box) {
+          box.textContent = "Demo-Push: Neues Event von " + provider + " wurde erkannt.";
+          box.style.display = "block";
+        }
+
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Neues Event von " + provider, { body: title });
+        }
+      }
+
+      document.getElementById("businessSuccess").style.display = "block";
+      document.getElementById("bizName").value = "";
+      document.getElementById("eventTitle").value = "";
+      document.getElementById("eventLocation").value = "";
+      document.getElementById("eventPrice").value = "";
+      document.getElementById("eventDescription").value = "";
+
+      renderEvents();
+      renderAdminRows();
+      scrollToSection("events");
+    }
+
+    function renderAdminRows() {
+      const tbody = document.getElementById("adminRows");
+      tbody.innerHTML = "";
+
+      events.forEach(event => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${event.title}</strong><br><span style="color: var(--muted)">${event.provider}</span></td>
+          <td>${event.category}</td>
+          <td>${event.day}, ${event.time}</td>
+          <td>${event.location}</td>
+          <td>${event.featured ? "Top gereiht" : "Kostenlos gelistet"}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    applyTheme();
+    renderCategoryChips();
+    renderEvents();
+    renderAdminRows();
+    applyRegisteredState();
+  </script>
+</body>
+</html>
