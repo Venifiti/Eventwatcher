@@ -356,33 +356,7 @@
     .business-form .full {
       grid-column: 1 / -1;
     }
-
-    .money-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
-
-    .money-card {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 18px;
-      background: white;
-    }
-
-    .money-card strong {
-      display: block;
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-
-    .money-card p {
-      color: var(--muted);
-      line-height: 1.5;
-      margin: 0;
-    }
-
-    .admin-table {
+.admin-table {
       width: 100%;
       border-collapse: collapse;
       overflow: hidden;
@@ -422,7 +396,7 @@
         grid-template-columns: 1fr;
       }
 
-      .filters, .business-form, .money-grid {
+      .filters, .business-form {
         grid-template-columns: 1fr;
       }
 
@@ -445,7 +419,6 @@
         <div class="nav">
           <button onclick="scrollToSection('events')">Events finden</button>
           <button onclick="scrollToSection('business')">Event eintragen</button>
-          <button onclick="scrollToSection('money')">Geschäftsmodell</button>
         </div>
       </div>
 
@@ -587,34 +560,6 @@
         </thead>
         <tbody id="adminRows"></tbody>
       </table>
-    </section>
-
-    <section id="money" class="panel">
-      <div class="section-title">
-        <div>
-          <h2>Wie daraus Geld entstehen kann</h2>
-          <p>Erst Reichweite aufbauen, danach schrittweise Einnahmen aktivieren.</p>
-        </div>
-      </div>
-
-      <div class="money-grid">
-        <div class="money-card">
-          <strong>1. Kostenlos starten</strong>
-          <p>Unternehmen tragen Events gratis ein. Dadurch entsteht schnell ein voller Kalender.</p>
-        </div>
-        <div class="money-card">
-          <strong>2. Premium-Ranking</strong>
-          <p>Anbieter zahlen später für bessere Platzierung, mehr Reichweite und aktive Vorschläge an Nutzer.</p>
-        </div>
-        <div class="money-card">
-          <strong>3. Reservierungen</strong>
-          <p>Pro bestätigter Reservierung kann eine kleine Vermittlungsgebühr verrechnet werden.</p>
-        </div>
-        <div class="money-card">
-          <strong>4. Werbung & Insights</strong>
-          <p>Lokale Werbung, Trendberichte und anonymisierte Auswertungen sind möglich. Personendaten sollten nicht roh verkauft werden.</p>
-        </div>
-      </div>
     </section>
   </main>
 
