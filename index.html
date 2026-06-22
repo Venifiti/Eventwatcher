@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salzburg Events App – Prototyp</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #171717;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --soft: #eef4ff;
+      --good: #16a34a;
+      --warn: #f59e0b;
+      --danger: #dc2626;
+      --radius: 20px;
+      --shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      padding: 28px 18px 34px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 34px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav button {
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.12);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .nav button:hover {
+      background: rgba(255,255,255,0.22);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero h1 {
+      font-size: clamp(34px, 6vw, 64px);
+      line-height: 0.98;
+      margin: 0 0 18px;
+      letter-spacing: -2px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.55;
+      margin: 0 0 24px;
+      color: rgba(255,255,255,0.88);
+      max-width: 720px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      background: var(--primary);
+      color: white;
+      padding: 13px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 15px;
+      transition: 0.15s ease;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn.secondary {
+      background: white;
+      color: var(--primary);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--line);
+    }
+
+    .btn.small {
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: var(--radius);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-card h3 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-item {
+      background: rgba(255,255,255,0.12);
+      padding: 12px;
+      border-radius: 14px;
+    }
+
+    main {
+      padding: 26px 18px 70px;
+    }
+
+    .panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 22px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.7px;
+    }
+
+    .section-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 170px 170px;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font: inherit;
+      background: white;
+    }
+
+    textarea {
+      min-height: 94px;
+      resize: vertical;
+    }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      background: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      color: #374151;
+    }
+
+    .chip.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .events {
+      display: grid;
+      gap: 14px;
+    }
+
+    .event-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: white;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+    }
+
+    .event-card.featured {
+      border-color: #bfdbfe;
+      background: linear-gradient(135deg, #ffffff, #eff6ff);
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      background: #f3f4f6;
+      color: #374151;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .badge.premium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge.free {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .event-card h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .event-meta {
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+
+    .event-desc {
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .event-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 150px;
+      justify-content: center;
+    }
+
+    .side {
+      display: grid;
+      gap: 18px;
+    }
+
+    .login-box, .business-box, .stats-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: white;
+    }
+
+    .login-box h3, .business-box h3, .stats-box h3 {
+      margin: 0 0 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .success {
+      background: #ecfdf5;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      display: none;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    .business-form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .business-form .full {
+      grid-column: 1 / -1;
+    }
+
+    .money-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .money-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: white;
+    }
+
+    .money-card strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .money-card p {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .admin-table th, .admin-table td {
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 12px;
+      vertical-align: top;
+    }
+
+    .admin-table th {
+      background: #f9fafb;
+      font-size: 13px;
+      color: #374151;
+    }
+
+    .empty {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: white;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      padding: 20px;
+    }
+
+    @media (max-width: 930px) {
+      .hero, .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters, .business-form, .money-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .event-card {
+        grid-template-columns: 1fr;
+      }
+
+      .event-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="topbar">
+        <div class="logo">WasGeht.at</div>
+        <div class="nav">
+          <button onclick="scrollToSection('events')">Events finden</button>
+          <button onclick="scrollToSection('business')">Event eintragen</button>
+          <button onclick="scrollToSection('money')">Geschäftsmodell</button>
+        </div>
+      </div>
+
+      <section class="hero">
+        <div>
+          <h1>Finde schnell, was heute in Salzburg los ist.</h1>
+          <p>
+            Eine einfache Event-App für Familien, Senioren, Essen, Kultur, Bars, Partys und Freizeit.
+            Nutzer bekommen passende Ideen in ihrer Nähe. Unternehmen können Events eintragen und Reservierungen sammeln.
+          </p>
+          <div class="hero-actions">
+            <button class="btn secondary" onclick="scrollToSection('events')">Jetzt Events ansehen</button>
+            <button class="btn" onclick="scrollToSection('business')">Als Unternehmen eintragen</button>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <h3>Heute vorgeschlagen</h3>
+          <div class="mini-list">
+            <div class="mini-item">👨‍👩‍👧 Familienbrunch im Park Café</div>
+            <div class="mini-item">🍝 Pasta-Abend in der Altstadt</div>
+            <div class="mini-item">🎧 Afterwork Party am Rudolfskai</div>
+            <div class="mini-item">🎭 Seniorennachmittag mit Musik</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="events" class="panel">
+      <div class="section-title">
+        <div>
+          <h2>Events in Salzburg</h2>
+          <p>Filtere nach Zielgruppe, Kategorie, Datum oder Suche.</p>
+        </div>
+      </div>
+
+      <div class="filters">
+        <input id="searchInput" type="text" placeholder="Suche nach Event, Ort oder Anbieter..." oninput="renderEvents()" />
+        <select id="dateFilter" onchange="renderEvents()">
+          <option value="all">Alle Tage</option>
+          <option value="Heute">Heute</option>
+          <option value="Morgen">Morgen</option>
+          <option value="Wochenende">Wochenende</option>
+        </select>
+        <select id="sortFilter" onchange="renderEvents()">
+          <option value="recommended">Empfohlen</option>
+          <option value="cheap">Kostenlos zuerst</option>
+          <option value="popular">Beliebt zuerst</option>
+        </select>
+      </div>
+
+      <div class="chips" id="categoryChips"></div>
+
+      <div class="content-grid">
+        <div>
+          <div class="events" id="eventList"></div>
+        </div>
+
+        <aside class="side">
+          <div class="login-box">
+            <h3>Einfach registrieren</h3>
+            <div class="form-grid">
+              <input id="userName" type="text" placeholder="Dein Name" />
+              <input id="userEmail" type="email" placeholder="E-Mail" />
+              <input id="userLocation" type="text" value="Salzburg" placeholder="Standort" />
+              <select id="userInterest">
+                <option>Familie</option>
+                <option>Essen</option>
+                <option>Party</option>
+                <option>Senioren</option>
+                <option>Kultur</option>
+              </select>
+              <button class="btn" onclick="registerUser()">Registrieren</button>
+              <div class="success" id="registerSuccess">Registriert! Ab jetzt würden passende Events personalisiert vorgeschlagen werden.</div>
+            </div>
+          </div>
+
+          <div class="stats-box">
+            <h3>Live-Idee für später</h3>
+            <p>Nach Registrierung kann die App passende Events nach Standort, Interessen, Alterssituation und Uhrzeit vorschlagen.</p>
+            <p><strong id="reservationCount">0</strong> Demo-Zusagen/Reservierungen in dieser Sitzung.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="business" class="panel">
+      <div class="section-title">
+        <div>
+          <h2>Event als Unternehmen eintragen</h2>
+          <p>In der ersten Phase kostenlos. Später können Anbieter für bessere Sichtbarkeit zahlen.</p>
+        </div>
+      </div>
+
+      <div class="business-box">
+        <div class="business-form">
+          <input id="bizName" type="text" placeholder="Unternehmen / Veranstalter" />
+          <input id="eventTitle" type="text" placeholder="Event-Titel" />
+          <select id="eventCategory">
+            <option>Familie</option>
+            <option>Senioren</option>
+            <option>Essen</option>
+            <option>Party</option>
+            <option>Kultur</option>
+            <option>Sport</option>
+          </select>
+          <select id="eventDay">
+            <option>Heute</option>
+            <option>Morgen</option>
+            <option>Wochenende</option>
+          </select>
+          <input id="eventLocation" type="text" placeholder="Ort, z.B. Salzburg Altstadt" />
+          <input id="eventPrice" type="text" placeholder="Preis, z.B. kostenlos / 12 €" />
+          <textarea class="full" id="eventDescription" placeholder="Kurze Beschreibung des Events"></textarea>
+          <button class="btn full" onclick="addBusinessEvent()">Event kostenlos eintragen</button>
+        </div>
+        <div class="success" id="businessSuccess">Event wurde eingetragen und erscheint sofort in der Liste.</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title">
+        <div>
+          <h2>Admin-Ansicht für Anbieter</h2>
+          <p>So könnte ein einfacher Kalender / Event-Manager aussehen.</p>
+        </div>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Kategorie</th>
+            <th>Tag</th>
+            <th>Ort</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="adminRows"></tbody>
+      </table>
+    </section>
+
+    <section id="money" class="panel">
+      <div class="section-title">
+        <div>
+          <h2>Wie daraus Geld entstehen kann</h2>
+          <p>Erst Reichweite aufbauen, danach schrittweise Einnahmen aktivieren.</p>
+        </div>
+      </div>
+
+      <div class="money-grid">
+        <div class="money-card">
+          <strong>1. Kostenlos starten</strong>
+          <p>Unternehmen tragen Events gratis ein. Dadurch entsteht schnell ein voller Kalender.</p>
+        </div>
+        <div class="money-card">
+          <strong>2. Premium-Ranking</strong>
+          <p>Anbieter zahlen später für bessere Platzierung, mehr Reichweite und aktive Vorschläge an Nutzer.</p>
+        </div>
+        <div class="money-card">
+          <strong>3. Reservierungen</strong>
+          <p>Pro bestätigter Reservierung kann eine kleine Vermittlungsgebühr verrechnet werden.</p>
+        </div>
+        <div class="money-card">
+          <strong>4. Werbung & Insights</strong>
+          <p>Lokale Werbung, Trendberichte und anonymisierte Auswertungen sind möglich. Personendaten sollten nicht roh verkauft werden.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Prototyp für eine einfache Event-App. Noch ohne echtes Backend, Login, Zahlung oder Datenschutzsystem.
+  </footer>
+
+  <script>
+    const categories = ["Alle", "Familie", "Senioren", "Essen", "Party", "Kultur", "Sport"];
+    let activeCategory = "Alle";
+    let reservationCounter = 0;
+
+    let events = [
+      {
+        title: "Familienbrunch im Park Café",
+        category: "Familie",
+        day: "Heute",
+        time: "10:00",
+        location: "Salzburg Nonntal",
+        price: "18 €",
+        provider: "Park Café Salzburg",
+        description: "Gemütlicher Brunch mit Spielecke, Kinderkarte und Platz für Kinderwägen.",
+        popular: 91,
+        featured: true
+      },
+      {
+        title: "Pasta-Abend in der Altstadt",
+        category: "Essen",
+        day: "Heute",
+        time: "18:30",
+        location: "Salzburg Altstadt",
+        price: "22 €",
+        provider: "Trattoria Centro",
+        description: "Italienischer Abend mit drei Pasta-Varianten und optionaler Weinbegleitung.",
+        popular: 86,
+        featured: false
+      },
+      {
+        title: "Afterwork Party am Rudolfskai",
+        category: "Party",
+        day: "Heute",
+        time: "20:00",
+        location: "Rudolfskai",
+        price: "kostenlos",
+        provider: "Bar Am Kai",
+        description: "Musik, Drinks und lockerer Treffpunkt für Freunde nach der Arbeit.",
+        popular: 95,
+        featured: true
+      },
+      {
+        title: "Seniorennachmittag mit Live-Musik",
+        category: "Senioren",
+        day: "Morgen",
+        time: "15:00",
+        location: "Salzburg Lehen",
+        price: "kostenlos",
+        provider: "Kulturhaus Lehen",
+        description: "Ruhiger Nachmittag mit Kaffee, Kuchen und bekannten Klassikern.",
+        popular: 72,
+        featured: false
+      },
+      {
+        title: "Kinder-Theater: Der kleine Drache",
+        category: "Kultur",
+        day: "Wochenende",
+        time: "14:00",
+        location: "Salzburg Maxglan",
+        price: "9 €",
+        provider: "Theater Maxglan",
+        description: "Kurzes Theaterstück für Kinder ab 4 Jahren. Ideal für Familien am Wochenende.",
+        popular: 82,
+        featured: false
+      },
+      {
+        title: "Yoga im Mirabellgarten",
+        category: "Sport",
+        day: "Morgen",
+        time: "08:30",
+        location: "Mirabellgarten",
+        price: "freiwillige Spende",
+        provider: "Move Salzburg",
+        description: "Sanfte Yoga-Einheit im Freien. Matte mitbringen.",
+        popular: 78,
+        featured: false
+      }
+    ];
+
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+    }
+
+    function renderCategoryChips() {
+      const wrapper = document.getElementById("categoryChips");
+      wrapper.innerHTML = "";
+
+      categories.forEach(category => {
+        const chip = document.createElement("button");
+        chip.className = "chip" + (category === activeCategory ? " active" : "");
+        chip.textContent = category;
+        chip.onclick = () => {
+          activeCategory = category;
+          renderCategoryChips();
+          renderEvents();
+        };
+        wrapper.appendChild(chip);
+      });
+    }
+
+    function renderEvents() {
+      const list = document.getElementById("eventList");
+      const search = document.getElementById("searchInput").value.toLowerCase().trim();
+      const date = document.getElementById("dateFilter").value;
+      const sort = document.getElementById("sortFilter").value;
+
+      let filtered = events.filter(event => {
+        const matchesCategory = activeCategory === "Alle" || event.category === activeCategory;
+        const matchesDate = date === "all" || event.day === date;
+        const searchText = `${event.title} ${event.provider} ${event.location} ${event.description}`.toLowerCase();
+        const matchesSearch = !search || searchText.includes(search);
+        return matchesCategory && matchesDate && matchesSearch;
+      });
+
+      if (sort === "cheap") {
+        filtered.sort((a, b) => {
+          const aFree = a.price.toLowerCase().includes("kostenlos") || a.price.toLowerCase().includes("spende");
+          const bFree = b.price.toLowerCase().includes("kostenlos") || b.price.toLowerCase().includes("spende");
+          return Number(bFree) - Number(aFree);
+        });
+      }
+
+      if (sort === "popular") {
+        filtered.sort((a, b) => b.popular - a.popular);
+      }
+
+      if (sort === "recommended") {
+        filtered.sort((a, b) => Number(b.featured) - Number(a.featured) || b.popular - a.popular);
+      }
+
+      list.innerHTML = "";
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty">Keine passenden Events gefunden. Ändere den Filter oder trage ein neues Event ein.</div>';
+        return;
+      }
+
+      filtered.forEach((event, index) => {
+        const card = document.createElement("article");
+        card.className = "event-card" + (event.featured ? " featured" : "");
+        card.innerHTML = `
+          <div>
+            <div class="badge-row">
+              <span class="badge">${event.category}</span>
+              <span class="badge">${event.day}, ${event.time}</span>
+              <span class="badge">${event.price}</span>
+              ${event.featured ? '<span class="badge premium">Top gereiht</span>' : '<span class="badge free">Standard</span>'}
+            </div>
+            <h3>${event.title}</h3>
+            <div class="event-meta">
+              📍 ${event.location}<br />
+              🏢 ${event.provider} · Beliebtheit ${event.popular}%
+            </div>
+            <p class="event-desc">${event.description}</p>
+          </div>
+          <div class="event-actions">
+            <button class="btn small" onclick="reserveEvent('${event.title.replaceAll("'", "\\'")}')">Reservieren</button>
+            <button class="btn small ghost" onclick="joinEvent('${event.title.replaceAll("'", "\\'")}')">Zusagen</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function reserveEvent(title) {
+      reservationCounter++;
+      document.getElementById("reservationCount").textContent = reservationCounter;
+      alert("Reservierung vorgemerkt für: " + title);
+    }
+
+    function joinEvent(title) {
+      reservationCounter++;
+      document.getElementById("reservationCount").textContent = reservationCounter;
+      alert("Zusage gespeichert für: " + title);
+    }
+
+    function registerUser() {
+      const name = document.getElementById("userName").value.trim();
+      const email = document.getElementById("userEmail").value.trim();
+      const location = document.getElementById("userLocation").value.trim();
+
+      if (!name || !email || !location) {
+        alert("Bitte Name, E-Mail und Standort ausfüllen.");
+        return;
+      }
+
+      document.getElementById("registerSuccess").style.display = "block";
+    }
+
+    function addBusinessEvent() {
+      const provider = document.getElementById("bizName").value.trim();
+      const title = document.getElementById("eventTitle").value.trim();
+      const category = document.getElementById("eventCategory").value;
+      const day = document.getElementById("eventDay").value;
+      const location = document.getElementById("eventLocation").value.trim();
+      const price = document.getElementById("eventPrice").value.trim();
+      const description = document.getElementById("eventDescription").value.trim();
+
+      if (!provider || !title || !location || !price || !description) {
+        alert("Bitte alle Felder ausfüllen.");
+        return;
+      }
+
+      events.unshift({
+        title,
+        category,
+        day,
+        time: "19:00",
+        location,
+        price,
+        provider,
+        description,
+        popular: 50,
+        featured: false
+      });
+
+      document.getElementById("businessSuccess").style.display = "block";
+
+      document.getElementById("bizName").value = "";
+      document.getElementById("eventTitle").value = "";
+      document.getElementById("eventLocation").value = "";
+      document.getElementById("eventPrice").value = "";
+      document.getElementById("eventDescription").value = "";
+
+      renderEvents();
+      renderAdminRows();
+      scrollToSection("events");
+    }
+
+    function renderAdminRows() {
+      const tbody = document.getElementById("adminRows");
+      tbody.innerHTML = "";
+
+      events.forEach(event => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${event.title}</strong><br><span style="color:#6b7280">${event.provider}</span></td>
+          <td>${event.category}</td>
+          <td>${event.day}, ${event.time}</td>
+          <td>${event.location}</td>
+          <td>${event.featured ? "Top gereiht" : "Kostenlos gelistet"}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    renderCategoryChips();
+    renderEvents();
+    renderAdminRows();
+  </script>
+</body>
+</html>
